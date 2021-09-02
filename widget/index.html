@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            color: white;
+        }
+
+        :root {
+            --info-width: 1650px;
+            --size: 600px;
+            --body-background: green;
+        }
+
+        body {
+            background-color: transparent;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--body-background);
+            font-size: calc(var(--size) * 0.2);
+        }
+
+        .container {
+            width: calc(var(--info-width) + var(--size) - calc(var(--size) * 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon {
+            height: var(--size);
+            width: var(--size);
+            z-index: 1;
+        }
+
+        .icon img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .info {
+            flex-grow: 1;
+            background-color: rgb(46, 46, 46);
+            height: calc(var(--size) * .6);
+            width: 0px;
+            margin-left: calc(var(--size) * -0.2);
+            padding-left: calc(var(--size) * 0.275);
+            border-radius: calc(var(--size) * 0.125);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .artist {
+            white-space: nowrap;
+            font-style: italic;
+            color: rgb(117, 147, 204);
+            position: absolute;
+            margin-top: calc(var(--size) * 0.01);
+        }
+
+        hr {
+            margin-top: calc(var(--size) * 0.275);
+            margin-left: calc(var(--size) * -0.125);
+            outline: none;
+            border: none;
+            border-bottom: calc(var(--size) * 0.0075) solid rgb(212, 212, 212);
+        }
+
+        .title {
+            white-space: nowrap;
+            margin-top: calc(var(--size) * 0.01);
+            font-size: calc(var(--size) * 0.24);
+            position: absolute;
+        }
+
+        .animate {
+            animation: textAnim 15s linear 0s infinite;
+        }
+
+        @keyframes textAnim {
+            0% {
+                transform: translateX(var(--info-width));
+            }
+
+            100% {
+                transform: translateX(calc(-100% - calc(var(--size) * 0.125)))
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="icon">
+            <img>
+        </div>
+        <div class="info">
+            <div class="artist">Loading...</div>
+            <hr>
+            <div class="title">Please wait :)</div>
+        </div>
+    </div>
+</body>
+
+<script type="module">
+    import radioSetup from "./setup.js"
+
+    const img = document.querySelector(".icon img")
+    const artist = document.querySelector(".artist")
+    const title = document.querySelector(".title")
+    const info = document.querySelector(".info")
+    const docStyle = document.documentElement.style
+
+    img.setAttribute('src', radioSetup.defaultImage)
+    docStyle.setProperty('--info-width', radioSetup.infoWidth);
+    docStyle.setProperty('--size', radioSetup.widgetSize);
+    docStyle.setProperty('--body-background', radioSetup.bodyBackground);
+    
+    setInterval(fetchData, 3000)
+
+    function fetchData() {
+        let data = fetch(radioSetup.currentlyPlayingTrack)
+            .then(res => res.json())
+            .then(data => {
+                if (artist.textContent !== data.artist)
+                    artist.textContent = data.artist || radioSetup.defaultArtist
+
+                if (title.textContent !== data.title)
+                    title.textContent = data.title || radioSetup.defaultTitle
+
+                if (data.cover !== undefined && data.cover !== null && data.cover !== "")
+                    img.setAttribute('src', data.cover)
+                else
+                    img.setAttribute('src', radioSetup.defaultImage)
+
+                const infoPadding = parseInt(window.getComputedStyle(info).paddingLeft)
+
+                if (title.clientWidth >= info.clientWidth - infoPadding)
+                    title.classList.add("animate")
+                else
+                    title.classList.remove("animate")
+
+                if (artist.clientWidth >= info.clientWidth - infoPadding)
+                    artist.classList.add("animate")
+                else
+                    artist.classList.remove("animate")
+            })
+    }
+</script>
+
+</html>
