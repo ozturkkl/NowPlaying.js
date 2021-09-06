@@ -4,7 +4,7 @@ A small widget that displays the track that is currently playing. It is responsi
 ![example](https://user-images.githubusercontent.com/51798197/131869081-653f4eb8-e438-49b4-9b61-0abfa5e1ab36.png)
 
 ## Demo
-Click [here](https://ozturkkl.github.io/NowPlaying.js/widget) to view the demo.
+Click [here](https://ozturkkl.github.io/NowPlaying.js) to view the demo.
 
 ## Usage
 Download the repo, it contains the widget. Go to your streaming software and add "Browser Source", direct its url to the repo foler.
